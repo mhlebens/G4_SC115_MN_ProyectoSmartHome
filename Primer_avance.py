@@ -1,4 +1,5 @@
-def registro_usuarios():
+
+def registro_usuarios()
     nombre=input("Ingrese su nombre: ")
     correo=input("Ingrese su correo electronico: ")
     pin =input("Ingrese su pin: ")
