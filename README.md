@@ -38,7 +38,7 @@ while   casaMenu !=3:
         print("La opción seleccionada no corresponde")
 
 
-##Agregar sala, dormitorio y comedor en casa(Parte2_Raymundo)        
+##Agregar sala, dormitorio y comedor en casa        
 ## Se crean 3 variables
 agregar_sala = ""
 agregar_dormitorio =""
