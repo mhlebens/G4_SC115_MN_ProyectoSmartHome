@@ -1,18 +1,26 @@
 # G4_SC115_MN_ProyectoSmartHome
 
 
-#Tercera tarea(Raymundo), la idea de esta parte del proyecto es crear una proceso para agregar habitaciones( se considera que es necesario agregar, areas de la casa, como sala, dormitorio y comedor), para ello, se crean 3 variables para luego crear un ciclo, donde el usuario, al tener su casa, pueda ir creando las areas de su casa, para ello, se propone un ciclo, donde le consultara que area de la casa quiere agregar y con option de salir del sistema.
+#Tercera tarea(Raymundo), la idea de esta parte del proyecto es crear una proceso para agregar  casas y habitaciones( se considera que es necesario agregar, areas de la casa, como sala, dormitorio y comedor), para ello, se crean 3 variables para luego crear un ciclo, donde el usuario, al tener su casa, pueda ir creando las areas de su casa, para ello, se propone un ciclo, donde le consultara que area de la casa quiere agregar y con option de salir del sistema, para correr este proceso, primero tienen que ingresar con su usuario, pw y correo
 
+## Ingresar a sistema previo a crear casas y registrar habitaciones
+Ingresar_a_sistema = ""
+
+if Ingresar_a_sistema =="":
+        usuario = input("Ingrese su usuario:")
+        Correo = input("Ingrese su correo")
+        password = input("Ingrese su contraseña")
+        
 ## Registrar casa
 ## Se crean 1 variable
 
 Registrar_casa = ""
 
-#Se crea un ciclo para registrar casas
+##Se crea un ciclo para registrar casas
 casaMenu=1
 
-while   casaMenu !=4:
-    casaMenu = int(input("Seleccione la casa preferida\n1.Registrar Casa#1\n2.Registrar casa#2\n3.Registrar casa#3\n4.Salir\nDigite la opcion que desea:"))
+while   casaMenu !=3:
+    casaMenu = int(input("Seleccione la casa preferida\n1.Registrar Casa#1\n2.Registrar casa#2\n4.Salir\nDigite la opcion que desea:"))
     if casaMenu ==1:
         if Registrar_casa =="":
             print("Registre Casa#1")
@@ -22,12 +30,8 @@ while   casaMenu !=4:
         Registrar_casa = input("Registre casa#2")
         print("Registre Casa#2")
 
-    elif casaMenu ==3:
-        Registrar_casa = input("Registre casa#3")
-        print("Registre Casa#3")     
                   
-    
-    elif casaMenu ==4:
+    elif casaMenu ==3:
         print("Ha salido del sistema")
 
     else:
