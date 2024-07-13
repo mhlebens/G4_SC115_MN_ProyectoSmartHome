@@ -1,25 +1,37 @@
 # G4_SC115_MN_ProyectoSmartHome
 
 
-#Tercera tarea(Raymundo), la idea de esta parte del proyecto es crear una estructura de datos para almacenar informacion de las casas, como crear una funcion que le permita al usuario registrar una nueva casa, se crea una "clase" llamada casa, para luego crear funciones para agregar habitaciones ( esty considerando un tamano de cada habitacion, donde las habitaciones creadas, como escenario, les llame,  "Sala", "Cocina" y un "dormitorio", se pueden agregar mas), esto con la idea de dar un output o print para el usuario, sobre lo agregado (** en validacion**)
+#Tercera tarea(Raymundo), la idea de esta parte del proyecto es crear una proceso para agregar habitaciones( se considera que es necesario agregar, areas de la casa, como sala, dormitorio y comedor), para ello, se crean 3 variables para luego crear un ciclo, donde el usuario, al tener su casa, pueda ir creando las areas de su casa, para ello, se propone un ciclo, donde le consultara que area de la casa quiere agregar y con option de salir del sistema.
 
-class Casa:
-    def __init__(self, nombre):
-        self.nombre = nombre
-        self.habitaciones = {}
+##Agregar sala, dormitorio y comedor en casa
+## Se crean 3 variables
+agregar_sala = ""
+agregar_dormitorio =""
+agregar_comedor = ""
 
-    def agregar_habitacion(self, nombre_habitacion, metros_cuadrados):
-        self.habitaciones[nombre_habitacion] = metros_cuadrados
+##  Se trabaja en un ciclo para que el usuario elija la opcion en su casa a agregar
+opcionMenu=1
 
-# Crear una casa
-mi_casa = Casa("Mi Casa")
+while opcionMenu !=4:
 
-# Agregar habitaciones a la casa
-mi_casa.agregar_habitacion("Sala", 30)
-mi_casa.agregar_habitacion("Cocina", 20)
-mi_casa.agregar_habitacion("Dormitorio", 15)
+    opcionMenu = int(input("Seleccione la opción que desea\n1.Agregar una sala\n2.Agregar un dormitorio\n3.Agregar comedor\n4.Salir\nDigite la opción que desea:"))
 
-# Imprimir las habitaciones de la casa
-print(f"Habitaciones de la casa {mi_casa.nombre}:")
-for habitacion, metros_cuadrados in mi_casa.habitaciones.items():
-    print(f"{habitacion}: {metros_cuadrados} metros cuadrados")
+    if opcionMenu ==1:
+        if agregar_sala =="":
+            print("Agregue una sala")
+            
+            
+            
+    elif opcionMenu ==2:
+        agregar_dormitorio = input("Agregue un dormitorio:")
+        print("Dormitorio agregado")
+        
+    elif opcionMenu ==3:
+        agregar_comedor = input("Agregue comedor:")
+        print("Comedor agregado")
+
+    elif opcionMenu ==4:
+        print("Ha salido del sistema")
+
+    else:
+        print("La opción seleccionada no corresponde")
