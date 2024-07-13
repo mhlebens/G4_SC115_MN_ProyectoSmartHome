@@ -20,7 +20,7 @@ Registrar_casa = ""
 casaMenu=1
 
 while   casaMenu !=3:
-    casaMenu = int(input("Seleccione la casa preferida\n1.Registrar Casa#1\n2.Registrar casa#2\n4.Salir\nDigite la opcion que desea:"))
+    casaMenu = int(input("Seleccione la casa preferida\n1.Registrar Casa#1\n2.Registrar casa#2\n3.Salir\nDigite la opcion que desea:"))
     if casaMenu ==1:
         if Registrar_casa =="":
             print("Registre Casa#1")
