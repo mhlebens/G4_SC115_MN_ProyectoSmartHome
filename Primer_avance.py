@@ -57,6 +57,25 @@ def verificacion ():
             autenticacion1()
         if seleU == 2:
             autenticacion2()
+
+#Autenticacion por separado
+def autenticacion1 ():
+    pinR = ""
+    while pinR == pin:
+        pinR= int(input("Ingrese el pin del usuario"))
+        if pinR != pin:
+            print("Contraseña incorrecta")
+        elif pinR == pin: 
+            print ("Contraseña correcta")
+            
+def autenticacion2():
+        pinR = ""
+    while pinR == pin2:
+        pinR= int(input("Ingrese el pin del usuario"))
+        if pinR != pin2:
+            print("Contraseña incorrecta")
+        elif pinR == pin2: 
+            print ("Contraseña correcta")
 # Llamado
 registro()
 segundo()
