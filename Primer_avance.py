@@ -20,7 +20,43 @@ def segundo():
         print("El pin es:", pin2)
     else:
         print("No se creo un segundo usuario")
-
+# verificacion
+def verificacion ():
+    nombre = ""
+    correo = ""
+    pin = ""
+    nombre2 = ""
+    correo2 = ""
+    pin2 = ""
+    if (nombre == "" and nombre2 ==""):
+        print ("No hay ningún usuario registrado por el momento")
+        nuevoUsuario = int(input("¿Desea registrar un nuevo usuario?\n1.Si\n2.No: "))
+        if nuevoUsuario == 1:
+            registro()
+            if nombre  != "":
+                print("1: ", nombre)
+                if nombre2 != "":
+                    print("2." + nombre)
+                seleU = int(input("Seleccione uno de los usuario:"))
+                if seleU == 1:
+                    autenticacion1()
+                elif seleU == 2 and nombre2 != "":
+                            autenticacion2()
+                else:
+                    print("Selección inválida")
+        else: 
+            print("Ha salido del sistema")
+    else:
+        print ("Existen usuarios registrados")
+        if nombre!= "":
+            print("1: ",nombre)
+        if nombre2!= "":
+            print("2: ",nombre2)
+        seleU = int(input("Seleccione uno de los usuarios: "))
+        if seleU == 1:
+            autenticacion1()
+        if seleU == 2:
+            autenticacion2()
 # Llamado
 registro()
 segundo()
