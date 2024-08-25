@@ -1,4 +1,13 @@
-usuarios = [] #almacenamiento
+import json
+
+usuarios = []  # almacenamiento en memoria
+
+# cargar los usuarios desde un archivo al inicio
+try:
+    with open("usuarios.txt", "r") as archivo:
+        usuarios = json.load(archivo)
+except FileNotFoundError:
+    pass  # Si el archivo no existe, simplemente seguimos con la lista vacía
 
 def registro():
     nombre = input("Ingrese su nombre: ")
@@ -19,6 +28,8 @@ def registrar_usuario(usuarios):
         print("El usuario ya está registrado.")
     else:
         usuarios.append({'nombre': nombre, 'correo': correo, 'pin': pin})
+        with open("usuarios.txt", "w") as archivo:  # guardar los usuarios en el archivo
+            json.dump(usuarios, archivo)
         print("Usuario registrado con éxito.")
 
 #loggeo
@@ -49,7 +60,7 @@ def menu_principal():
         elif opcion == '2':
             if not iniciar_sesion(usuarios):
                 print("Desea intentar de nuevo o registrar un nuevo usuario.")
-                continuar = input("Ingrese 1 para vovler a intentar o 2 para registrar un nuevo usuario: ")
+                continuar = input("Ingrese 1 para volver a intentar o 2 para registrar un nuevo usuario: ")
                 if continuar == '2':
                     registrar_usuario(usuarios)
                 elif continuar == '1':
@@ -62,6 +73,4 @@ def menu_principal():
         else:
             print("Opción no válida. Inténtelo de nuevo.")
 
-
 menu_principal()
-
