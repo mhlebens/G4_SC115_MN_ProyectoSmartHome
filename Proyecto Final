@@ -1,6 +1,8 @@
+# almacenamiento en memoria
 import json
-
-usuarios = []  # almacenamiento en memoria
+usuarios = []  
+dispositivos = []
+estadoDispositivos = []
 
 # cargar los usuarios desde un archivo al inicio
 try:
@@ -46,11 +48,78 @@ def iniciar_sesion(usuarios):
     print("Nombre o PIN incorrecto.")
     return False
 
+# Funciones relacionadas a los dispositivos
+
+# Función para registrar un nuevo dispositivo
+def registrar_dispositivo():
+    try:
+        print("Registro de nuevo dispositivo")
+        dispositivo = input("Ingrese el nombre del dispositivo: ")
+        estado_inicial = input("Ingrese el estado inicial (encendido/apagado): ").lower()
+        
+        if estado_inicial not in ["encendido", "apagado"]:
+            raise ValueError("Estado inválido. Debe ser 'encendido' o 'apagado'.")
+        
+        dispositivos.append(dispositivo)
+        estadoDispositivos.append(True if estado_inicial == "encendido" else False)
+        
+        print(f"Dispositivo {dispositivo} registrado exitosamente.\n")
+        gestionar_dispositivos()
+    except ValueError as e:
+        print(f"Error: {e}")
+        registrar_dispositivo()  # Volver a solicitar la entrada
+
+
+# Función para gestionar los dispositivos
+def gestionar_dispositivos():
+    print("Gestión de dispositivos")
+    try:
+        if len(dispositivos) == 0:
+            print("No hay dispositivos registrados.\n")
+            registrar_dispositivo()
+        else:
+            for i, dispositivo in enumerate(dispositivos):
+                estado = "encendido" if estadoDispositivos[i] else "apagado"
+                print(f"{i + 1}. {dispositivo} se encuentra {estado}")
+            
+            seleccion = int(input("Seleccione un dispositivo o ingrese 0 para registrar uno nuevo: ")) - 1
+            
+            if seleccion == -1:
+                registrar_dispositivo()
+            else:
+                cambiar_estado_dispositivo(seleccion)
+    
+    except ValueError:
+        print("Error: Debe ingresar un número válido. Intente nuevamente.")
+        gestionar_dispositivos()  # Volver a solicitar entrada al usuario
+    except IndexError:
+        print("Error: Selección fuera de rango. Intente nuevamente.")
+        gestionar_dispositivos()  # Volver a solicitar entrada al usuario
+
+    
+# Función para cambiar el estado de un dispositivo
+def cambiar_estado_dispositivo(indice):
+    try:
+        nuevo_estado = input("Ingrese el nuevo estado (encendido/apagado): ").lower()
+        
+        if nuevo_estado not in ["encendido", "apagado"]:
+            raise ValueError("Estado inválido. Debe ser 'encendido' o 'apagado'.")
+        
+        estadoDispositivos[indice] = True if nuevo_estado == "encendido" else False
+        print(f"El dispositivo {dispositivos[indice]} ahora está {nuevo_estado}.\n")
+        gestionar_dispositivos()
+    
+    except ValueError as e:
+        print(f"Error: {e}")
+        cambiar_estado_dispositivo(indice)  # Volver a solicitar la entrada
+
+# Función del menú principal
 def menu_principal():
     while True:
         print("Menú Principal")
         print("1. Registrar usuario")
         print("2. Iniciar sesión")
+        print("3. Salir")
         print("3. Salir")
         
         opcion = input("Seleccione una opción: ")
@@ -72,5 +141,4 @@ def menu_principal():
             break
         else:
             print("Opción no válida. Inténtelo de nuevo.")
-
 menu_principal()
