@@ -6,6 +6,7 @@ dispositivos = []
 estadoDispositivos = []
 casas = []
 habitaciones = []
+cerraduras = []
 
 # Cargar los usuarios desde un archivo al inicio
 try:
@@ -13,6 +14,14 @@ try:
         usuarios = json.load(archivo)
 except FileNotFoundError:
     pass  # Si el archivo no existe, simplemente seguimos con la lista vacía
+
+def usuariosPreviamenteRegistrados():
+    if usuarios:
+        print("Usuarios registrados:")
+        for usuario in usuarios:
+            print(f"- {usuario['nombre']} ({usuario['correo']})")
+    else:
+        print("No hay usuarios registrados.")
 
 def registro():
     nombre = input("Ingrese su nombre: ")
@@ -24,7 +33,7 @@ def registro():
 def registrar_usuario(usuarios):
     nombre, correo, pin = registro()
 
-    # Ver si hay registro 
+    # Verificar si el usuario ya está registrado
     if any(usuario['nombre'] == nombre or usuario['correo'] == correo for usuario in usuarios):
         print("El usuario ya está registrado.")
     else:
@@ -34,6 +43,23 @@ def registrar_usuario(usuarios):
         print("Usuario registrado con éxito.")
 
 # Inicio de sesión
+def inicioSesion(usuarios):
+    usuariosPreviamenteRegistrados()
+
+    if not usuarios:
+        print("No hay usuarios registrados. Proceda a registrar un nuevo usuario.")
+        registrar_usuario(usuarios)
+    else:
+        opcion = input("¿Desea iniciar sesión o registrar un nuevo usuario? (1: Iniciar sesión, 2: Registrar usuario): ")
+        
+        if opcion == '1':
+            if not iniciar_sesion(usuarios):
+                print("Nombre o PIN incorrecto.")
+        elif opcion == '2':
+            registrar_usuario(usuarios)
+        else:
+            print("Opción no válida.")
+
 def iniciar_sesion(usuarios):
     nombre = input("Nombre: ")
     pin = input("PIN: ")
@@ -44,159 +70,249 @@ def iniciar_sesion(usuarios):
             print("Inicio de sesión exitoso.")
             return True
         
-    print("Nombre o PIN incorrecto.")
     return False
 
-# Funciones relacionadas con las casas y habitaciones
+# Función para actualizar el PIN
+def actualizar_pin():
+    nombre = input("Ingrese su nombre: ")
+    pin_actual = input("Ingrese su PIN actual: ")
 
-# Función para mostrar las casas registradas
-def mostrar_casas():
-    if casas:
-        print("Casas registradas:")
-        for casa in casas:
-            print(f"- {casa}")
-    else:
-        print("No hay casas registradas.")
-
-# Función para registrar una nueva casa
-def registrar_casa():
-    nombre_casa = input("Ingrese el nombre de la nueva casa: ").strip()
-    if nombre_casa in casas:
-        print("Esta casa ya está registrada.")
-    else:
-        casas.append(nombre_casa)
-        habitaciones.append([])  # Crear una lista vacía de habitaciones para esa casa
-        print(f"Casa '{nombre_casa}' registrada exitosamente.")
-
-# Función para mostrar las habitaciones de una casa específica
-def mostrar_habitaciones():
-    nombre_casa = input("Ingrese el nombre de la casa: ").strip()
-    if nombre_casa in casas:
-        indice_casa = casas.index(nombre_casa)
-        if habitaciones[indice_casa]:
-            print(f"Habitaciones en la casa '{nombre_casa}':")
-            for habitacion in habitaciones[indice_casa]:
-                print(f"- {habitacion}")
-        else:
-            print(f"La casa '{nombre_casa}' no tiene habitaciones registradas.")
-    else:
-        print("La casa no está registrada.")
-
-# Función para agregar una nueva habitación a una casa
-def agregar_habitacion():
-    nombre_casa = input("Ingrese el nombre de la casa: ").strip()
-    if nombre_casa in casas:
-        nombre_habitacion = input("Ingrese el nombre de la nueva habitación: ").strip()
-        indice_casa = casas.index(nombre_casa)
-        if nombre_habitacion in habitaciones[indice_casa]:
-            print(f"Ya existe una habitación llamada '{nombre_habitacion}' en la casa '{nombre_casa}'.")
-        else:
-            habitaciones[indice_casa].append(nombre_habitacion)
-            print(f"Habitación '{nombre_habitacion}' agregada exitosamente a la casa '{nombre_casa}'.")
-    else:
-        print("La casa no está registrada.")
-
-# Funciones relacionadas a los dispositivos
-
-# Función para registrar un nuevo dispositivo
-def registrar_dispositivo():
-    try:
-        print("Registro de nuevo dispositivo")
-        dispositivo = input("Ingrese el nombre del dispositivo: ")
-        estado_inicial = input("Ingrese el estado inicial (encendido/apagado): ").lower()
+    for usuario in usuarios:
+        if usuario['nombre'] == nombre and usuario['pin'] == pin_actual:
+            nuevo_pin = input("Ingrese el nuevo PIN: ")
+            usuario['pin'] = nuevo_pin
+            with open("usuarios.txt", "w") as archivo:  # Actualizar el archivo de usuarios
+                json.dump(usuarios, archivo)
+            print("PIN actualizado con éxito.")
+            return
         
-        if estado_inicial not in ["encendido", "apagado"]:
-            raise ValueError("Estado inválido. Debe ser 'encendido' o 'apagado'.")
-        
-        dispositivos.append(dispositivo)
-        estadoDispositivos.append(True if estado_inicial == "encendido" else False)
-        
-        print(f"Dispositivo {dispositivo} registrado exitosamente.\n")
-        gestionar_dispositivos()
-    except ValueError as e:
-        print(f"Error: {e}")
-        registrar_dispositivo()  # Volver a solicitar la entrada
+    print("Nombre o PIN incorrecto. No se pudo actualizar el PIN.")
 
-# Función para gestionar los dispositivos
-def gestionar_dispositivos():
-    print("Gestión de dispositivos")
-    try:
-        if len(dispositivos) == 0:
-            print("No hay dispositivos registrados.\n")
-            registrar_dispositivo()
-        else:
-            for i, dispositivo in enumerate(dispositivos):
-                estado = "encendido" if estadoDispositivos[i] else "apagado"
-                print(f"{i + 1}. {dispositivo} se encuentra {estado}")
-            
-            seleccion = int(input("Seleccione un dispositivo o ingrese 0 para registrar uno nuevo: ")) - 1
-            
-            if seleccion == -1:
-                registrar_dispositivo()
-            elif 0 <= seleccion < len(dispositivos):
-                cambiar_estado_dispositivo(seleccion)
+# Funciones combinadas para casas
+
+def gestionar_casas():
+    while True:
+        print("\nGestión de Casas")
+        print("1. Mostrar casas")
+        print("2. Registrar nueva casa")
+        print("3. Volver al menú principal")
+        
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            if casas:
+                print("Casas registradas:")
+                for casa in casas:
+                    print(f"- {casa}")
             else:
-                print("Error: Selección fuera de rango. Intente nuevamente.")
-                gestionar_dispositivos()
-    
-    except ValueError:
-        print("Error: Debe ingresar un número válido. Intente nuevamente.")
-        gestionar_dispositivos()  # Volver a solicitar entrada al usuario
+                print("No hay casas registradas.")
+        
+        elif opcion == '2':
+            nombre_casa = input("Ingrese el nombre de la nueva casa: ")
+            if nombre_casa in casas:
+                print("Esta casa ya está registrada.")
+            else:
+                casas.append(nombre_casa)
+                habitaciones.append([])  # Crear una lista vacía de habitaciones para esa casa
+                print(f"Casa '{nombre_casa}' registrada exitosamente.")
+        
+        elif opcion == '3':
+            break
+        
+        else:
+            print("Opción no válida. Inténtelo de nuevo.")
 
-# Función para cambiar el estado de un dispositivo
-def cambiar_estado_dispositivo(indice):
+# Funciones combinadas para habitaciones
+
+def gestionar_habitaciones():
+    while True:
+        print("\nGestión de Habitaciones")
+        print("1. Mostrar habitaciones de una casa")
+        print("2. Registrar nueva habitación en una casa")
+        print("3. Volver al menú principal")
+        
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            nombre_casa = input("Ingrese el nombre de la casa: ")
+            if nombre_casa in casas:
+                indice_casa = casas.index(nombre_casa)
+                if habitaciones[indice_casa]:
+                    print(f"Habitaciones en la casa '{nombre_casa}':")
+                    for habitacion in habitaciones[indice_casa]:
+                        print(f"- {habitacion}")
+                else:
+                    print(f"La casa '{nombre_casa}' no tiene habitaciones registradas.")
+            else:
+                print("La casa no está registrada.")
+        
+        elif opcion == '2':
+            nombre_casa = input("Ingrese el nombre de la casa: ")
+            if nombre_casa in casas:
+                nombre_habitacion = input("Ingrese el nombre de la nueva habitación: ")
+                indice_casa = casas.index(nombre_casa)
+                if nombre_habitacion in habitaciones[indice_casa]:
+                    print(f"Ya existe una habitación llamada '{nombre_habitacion}' en la casa '{nombre_casa}'.")
+                else:
+                    habitaciones[indice_casa].append(nombre_habitacion)
+                    print(f"Habitación '{nombre_habitacion}' agregada exitosamente a la casa '{nombre_casa}'.")
+            else:
+                print("La casa no está registrada.")
+        
+        elif opcion == '3':
+            break
+        
+        else:
+            print("Opción no válida. Inténtelo de nuevo.")
+
+# Funciones combinadas para cerraduras
+
+def gestionar_cerraduras():
+    while True:
+        print("\nGestión de Cerraduras")
+        print("1. Mostrar cerraduras")
+        print("2. Registrar nueva cerradura")
+        print("3. Volver al menú principal")
+        
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            if cerraduras:
+                print("Cerraduras registradas:")
+                for cerradura in cerraduras:
+                    print(f"- {cerradura['nombre']} (Estado: {cerradura['estado']}, Código: {cerradura['codigo']})")
+            else:
+                print("No hay cerraduras registradas.")
+        
+        elif opcion == '2':
+            nombre_cerradura = input("Ingrese el nombre de la cerradura: ")
+            estado_cerradura = input("Ingrese el estado inicial de la cerradura (abierto/cerrado): ").lower()
+            codigo_cerradura = input("Ingrese el código de apertura de la cerradura: ")
+
+            if estado_cerradura not in ["abierto", "cerrado"]:
+                print("Estado inválido. Debe ser 'abierto' o 'cerrado'.")
+            else:
+                cerraduras.append({'nombre': nombre_cerradura, 'estado': estado_cerradura, 'codigo': codigo_cerradura})
+                print(f"Cerradura '{nombre_cerradura}' registrada exitosamente.")
+        
+        elif opcion == '3':
+            break
+        
+        else:
+            print("Opción no válida. Inténtelo de nuevo.")
+
+# Función para gestionar dispositivos
+
+# Cargar los dispositivos desde un archivo al inicio
+def cargar_dispositivos():
     try:
-        nuevo_estado = input("Ingrese el nuevo estado (encendido/apagado): ").lower()
-        
-        if nuevo_estado not in ["encendido", "apagado"]:
-            raise ValueError("Estado inválido. Debe ser 'encendido' o 'apagado'.")
-        
-        estadoDispositivos[indice] = True if nuevo_estado == "encendido" else False
-        print(f"El dispositivo {dispositivos[indice]} ahora está {nuevo_estado}.\n")
-        gestionar_dispositivos()
+        with open("dispositivos.txt", "r") as archivo:
+            datos = json.load(archivo)
+            for dispositivo, estado in datos:
+                dispositivos.append(dispositivo)
+                estadoDispositivos.append(estado)
+    except FileNotFoundError:
+        pass  # Si el archivo no existe, seguimos con las listas vacías
+
+# Guardar los dispositivos en un archivo
+def guardar_dispositivos():
+    with open("dispositivos.txt", "w") as archivo:
+        json.dump(list(zip(dispositivos, estadoDispositivos)), archivo)
+
+def mostrar_dispositivos():
+    if dispositivos:
+        print("Dispositivos registrados:")
+        for i, dispositivo in enumerate(dispositivos):
+            estado = "encendido" if estadoDispositivos[i] else "apagado"
+            print(f"{i + 1}. {dispositivo} (Estado: {estado})")
+    else:
+        print("No hay dispositivos registrados.")
+
+def registrar_dispositivo():
+    print("\nRegistro de nuevo dispositivo")
+    dispositivo = input("Ingrese el nombre del dispositivo: ")
+    estado_inicial = input("Ingrese el estado inicial (encendido/apagado): ").lower()
     
-    except ValueError as e:
-        print(f"Error: {e}")
-        cambiar_estado_dispositivo(indice)  # Volver a solicitar la entrada
+    if estado_inicial not in ["encendido", "apagado"]:
+        print("Estado inválido. Debe ser 'encendido' o 'apagado'.")
+    else:
+        dispositivos.append(dispositivo)
+        estadoDispositivos.append(estado_inicial == "encendido")
+        print(f"Dispositivo '{dispositivo}' registrado exitosamente.\n")
+
+def cambiar_estado_dispositivo():
+    mostrar_dispositivos()
+    
+    if dispositivos:
+        seleccion = int(input("Seleccione el número del dispositivo que desea cambiar: ")) - 1
+        
+        if 0 <= seleccion < len(dispositivos):
+            nuevo_estado = input("Ingrese el nuevo estado (encendido/apagado): ").lower()
+            
+            if nuevo_estado not in ["encendido", "apagado"]:
+                print("Estado inválido. Debe ser 'encendido' o 'apagado'.")
+            else:
+                estadoDispositivos[seleccion] = nuevo_estado == "encendido"
+                print(f"El dispositivo '{dispositivos[seleccion]}' ahora está {nuevo_estado}.")
+        else:
+            print("Selección fuera de rango. Intente nuevamente.")
+    else:
+        print("No hay dispositivos registrados para cambiar su estado.")
+
+def gestionar_dispositivos():
+    while True:
+        print("\nGestión de Dispositivos")
+        print("1. Mostrar dispositivos")
+        print("2. Registrar nuevo dispositivo")
+        print("3. Cambiar estado de un dispositivo")
+        print("4. Volver al menú principal")
+        
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            mostrar_dispositivos()
+        
+        elif opcion == '2':
+            registrar_dispositivo()
+        
+        elif opcion == '3':
+            cambiar_estado_dispositivo()
+        
+        elif opcion == '4':
+            break
+        
+        else:
+            print("Opción no válida. Inténtelo de nuevo.")
+
+
 
 # Función del menú principal
 def menu_principal():
     while True:
         print("\nMenú Principal")
-        print("1. Registrar usuario")
-        print("2. Iniciar sesión")
-        print("3. Registrar casa")
-        print("4. Mostrar casas")
-        print("5. Agregar habitación a una casa")
-        print("6. Mostrar habitaciones de una casa")
-        print("7. Gestionar dispositivos")
-        print("8. Salir")
+        print("1. Iniciar sesión o registrar usuario")
+        print("2. Gestionar casas")
+        print("3. Gestionar habitaciones")
+        print("4. Gestionar dispositivos")
+        print("5. Gestionar cerraduras")
+        print("6. Actualizar PIN")
+        print("7. Salir")
         
         opcion = input("Seleccione una opción: ")
 
         if opcion == '1':
-            registrar_usuario(usuarios)
+            inicioSesion(usuarios)
         elif opcion == '2':
-            if not iniciar_sesion(usuarios):
-                print("Desea intentar de nuevo o registrar un nuevo usuario.")
-                continuar = input("Ingrese 1 para volver a intentar o 2 para registrar un nuevo usuario: ")
-                if continuar == '2':
-                    registrar_usuario(usuarios)
-                elif continuar == '1':
-                    continue
-                else:
-                    print("Opción no válida.")
+            gestionar_casas()
         elif opcion == '3':
-            registrar_casa()
+            gestionar_habitaciones()
         elif opcion == '4':
-            mostrar_casas()
-        elif opcion == '5':
-            agregar_habitacion()
-        elif opcion == '6':
-            mostrar_habitaciones()
-        elif opcion == '7':
             gestionar_dispositivos()
-        elif opcion == '8':
+        elif opcion == '5':
+            gestionar_cerraduras()
+        elif opcion == '6':
+            actualizar_pin()
+        elif opcion == '7':
             print("Saliendo del sistema.")
             break
         else:
