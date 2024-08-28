@@ -1,10 +1,13 @@
-# almacenamiento en memoria
 import json
+
+# Listas para almacenamiento en memoria
 usuarios = []  
 dispositivos = []
 estadoDispositivos = []
+casas = []
+habitaciones = []
 
-# cargar los usuarios desde un archivo al inicio
+# Cargar los usuarios desde un archivo al inicio
 try:
     with open("usuarios.txt", "r") as archivo:
         usuarios = json.load(archivo)
@@ -16,30 +19,26 @@ def registro():
     correo = input("Ingrese su correo electrónico: ")
     pin = input("Ingrese su pin: ")
     
-    print("Su nombre de la cuenta es:", nombre)
-    print("Su correo electrónico es:", correo)
-    print("Su pin es:", pin)
-    
     return nombre, correo, pin
 
 def registrar_usuario(usuarios):
     nombre, correo, pin = registro()
 
-    # ver si hay registro 
+    # Ver si hay registro 
     if any(usuario['nombre'] == nombre or usuario['correo'] == correo for usuario in usuarios):
         print("El usuario ya está registrado.")
     else:
         usuarios.append({'nombre': nombre, 'correo': correo, 'pin': pin})
-        with open("usuarios.txt", "w") as archivo:  # guardar los usuarios en el archivo
+        with open("usuarios.txt", "w") as archivo:  # Guardar los usuarios en el archivo
             json.dump(usuarios, archivo)
         print("Usuario registrado con éxito.")
 
-#loggeo
+# Inicio de sesión
 def iniciar_sesion(usuarios):
     nombre = input("Nombre: ")
     pin = input("PIN: ")
 
-    #verificar si las credenciales coinciden con las que se hicieron
+    # Verificar si las credenciales coinciden
     for usuario in usuarios:
         if usuario['nombre'] == nombre and usuario['pin'] == pin:
             print("Inicio de sesión exitoso.")
@@ -47,6 +46,55 @@ def iniciar_sesion(usuarios):
         
     print("Nombre o PIN incorrecto.")
     return False
+
+# Funciones relacionadas con las casas y habitaciones
+
+# Función para mostrar las casas registradas
+def mostrar_casas():
+    if casas:
+        print("Casas registradas:")
+        for casa in casas:
+            print(f"- {casa}")
+    else:
+        print("No hay casas registradas.")
+
+# Función para registrar una nueva casa
+def registrar_casa():
+    nombre_casa = input("Ingrese el nombre de la nueva casa: ").strip()
+    if nombre_casa in casas:
+        print("Esta casa ya está registrada.")
+    else:
+        casas.append(nombre_casa)
+        habitaciones.append([])  # Crear una lista vacía de habitaciones para esa casa
+        print(f"Casa '{nombre_casa}' registrada exitosamente.")
+
+# Función para mostrar las habitaciones de una casa específica
+def mostrar_habitaciones():
+    nombre_casa = input("Ingrese el nombre de la casa: ").strip()
+    if nombre_casa in casas:
+        indice_casa = casas.index(nombre_casa)
+        if habitaciones[indice_casa]:
+            print(f"Habitaciones en la casa '{nombre_casa}':")
+            for habitacion in habitaciones[indice_casa]:
+                print(f"- {habitacion}")
+        else:
+            print(f"La casa '{nombre_casa}' no tiene habitaciones registradas.")
+    else:
+        print("La casa no está registrada.")
+
+# Función para agregar una nueva habitación a una casa
+def agregar_habitacion():
+    nombre_casa = input("Ingrese el nombre de la casa: ").strip()
+    if nombre_casa in casas:
+        nombre_habitacion = input("Ingrese el nombre de la nueva habitación: ").strip()
+        indice_casa = casas.index(nombre_casa)
+        if nombre_habitacion in habitaciones[indice_casa]:
+            print(f"Ya existe una habitación llamada '{nombre_habitacion}' en la casa '{nombre_casa}'.")
+        else:
+            habitaciones[indice_casa].append(nombre_habitacion)
+            print(f"Habitación '{nombre_habitacion}' agregada exitosamente a la casa '{nombre_casa}'.")
+    else:
+        print("La casa no está registrada.")
 
 # Funciones relacionadas a los dispositivos
 
@@ -69,7 +117,6 @@ def registrar_dispositivo():
         print(f"Error: {e}")
         registrar_dispositivo()  # Volver a solicitar la entrada
 
-
 # Función para gestionar los dispositivos
 def gestionar_dispositivos():
     print("Gestión de dispositivos")
@@ -86,17 +133,16 @@ def gestionar_dispositivos():
             
             if seleccion == -1:
                 registrar_dispositivo()
-            else:
+            elif 0 <= seleccion < len(dispositivos):
                 cambiar_estado_dispositivo(seleccion)
+            else:
+                print("Error: Selección fuera de rango. Intente nuevamente.")
+                gestionar_dispositivos()
     
     except ValueError:
         print("Error: Debe ingresar un número válido. Intente nuevamente.")
         gestionar_dispositivos()  # Volver a solicitar entrada al usuario
-    except IndexError:
-        print("Error: Selección fuera de rango. Intente nuevamente.")
-        gestionar_dispositivos()  # Volver a solicitar entrada al usuario
 
-    
 # Función para cambiar el estado de un dispositivo
 def cambiar_estado_dispositivo(indice):
     try:
@@ -116,11 +162,15 @@ def cambiar_estado_dispositivo(indice):
 # Función del menú principal
 def menu_principal():
     while True:
-        print("Menú Principal")
+        print("\nMenú Principal")
         print("1. Registrar usuario")
         print("2. Iniciar sesión")
-        print("3. Salir")
-        print("3. Salir")
+        print("3. Registrar casa")
+        print("4. Mostrar casas")
+        print("5. Agregar habitación a una casa")
+        print("6. Mostrar habitaciones de una casa")
+        print("7. Gestionar dispositivos")
+        print("8. Salir")
         
         opcion = input("Seleccione una opción: ")
 
@@ -137,8 +187,20 @@ def menu_principal():
                 else:
                     print("Opción no válida.")
         elif opcion == '3':
+            registrar_casa()
+        elif opcion == '4':
+            mostrar_casas()
+        elif opcion == '5':
+            agregar_habitacion()
+        elif opcion == '6':
+            mostrar_habitaciones()
+        elif opcion == '7':
+            gestionar_dispositivos()
+        elif opcion == '8':
             print("Saliendo del sistema.")
             break
         else:
             print("Opción no válida. Inténtelo de nuevo.")
+
+# Ejecutar el menú principal
 menu_principal()
