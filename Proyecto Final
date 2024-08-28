@@ -7,6 +7,7 @@ estadoDispositivos = []
 casas = []
 habitaciones = []
 cerraduras = []
+horarioDispositivos = []
 
 # Cargar los usuarios desde un archivo al inicio
 try:
@@ -259,13 +260,33 @@ def cambiar_estado_dispositivo():
     else:
         print("No hay dispositivos registrados para cambiar su estado.")
 
+def programar_dispositivo():
+    mostrar_dispositivos()
+
+    if dispositivos:
+        seleccion = int(input("Seleccione el número del dispositivo que desea programar: ")) - 1
+
+        if 0 <= seleccion < len(dispositivos):
+            dia = input("Ingrese el día de la semana para programar (e.g., lunes): ")
+            hora = input("Ingrese la hora en que desea que se encienda: ")
+
+            # Guardar la programación directamente sin validaciones
+            horarioDispositivos[seleccion] = {"dia": dia, "hora": hora}
+            guardar_dispositivos()  # Guardar la programación en el archivo
+            print(f"El dispositivo '{dispositivos[seleccion]}' ha sido programado para encender el {dia} a las {hora}.")
+        else:
+            print("Selección fuera de rango. Intente nuevamente.")
+    else:
+        print("No hay dispositivos registrados para programar.")
+
 def gestionar_dispositivos():
     while True:
         print("\nGestión de Dispositivos")
         print("1. Mostrar dispositivos")
         print("2. Registrar nuevo dispositivo")
         print("3. Cambiar estado de un dispositivo")
-        print("4. Volver al menú principal")
+        print("4. Programar dispositivo")
+        print("5. Volver al menú principal")
         
         opcion = input("Seleccione una opción: ")
 
@@ -279,6 +300,9 @@ def gestionar_dispositivos():
             cambiar_estado_dispositivo()
         
         elif opcion == '4':
+            programar_dispositivo()
+        
+        elif opcion == '5':
             break
         
         else:
