@@ -89,7 +89,7 @@ def actualizar_pin():
         
     print("Nombre o PIN incorrecto. No se pudo actualizar el PIN.")
 
-# Funciones combinadas para casas
+# Funciones relacionadas con las casas
 
 def gestionar_casas():
     while True:
@@ -123,7 +123,7 @@ def gestionar_casas():
         else:
             print("Opción no válida. Inténtelo de nuevo.")
 
-# Funciones combinadas para habitaciones
+# Funciones relacionadas con las habitaciones
 
 def gestionar_habitaciones():
     while True:
@@ -166,7 +166,7 @@ def gestionar_habitaciones():
         else:
             print("Opción no válida. Inténtelo de nuevo.")
 
-# Funciones combinadas para cerraduras
+# Funciones relacionadas con las cerraduras
 
 def gestionar_cerraduras():
     while True:
@@ -202,7 +202,7 @@ def gestionar_cerraduras():
         else:
             print("Opción no válida. Inténtelo de nuevo.")
 
-# Función para gestionar dispositivos
+# Funciones relacionadas con los dispositivos
 
 # Cargar los dispositivos desde un archivo al inicio
 def cargar_dispositivos():
@@ -267,12 +267,12 @@ def programar_dispositivo():
         seleccion = int(input("Seleccione el número del dispositivo que desea programar: ")) - 1
 
         if 0 <= seleccion < len(dispositivos):
-            dia = input("Ingrese el día de la semana para programar (e.g., lunes): ")
+            dia = input("Ingrese el día de la semana para programar (por ejemplo, lunes): ")
             hora = input("Ingrese la hora en que desea que se encienda: ")
 
-            # Guardar la programación directamente sin validaciones
+            # Guardar la programación en el archivo
             horarioDispositivos[seleccion] = {"dia": dia, "hora": hora}
-            guardar_dispositivos()  # Guardar la programación en el archivo
+            guardar_dispositivos()  
             print(f"El dispositivo '{dispositivos[seleccion]}' ha sido programado para encender el {dia} a las {hora}.")
         else:
             print("Selección fuera de rango. Intente nuevamente.")
